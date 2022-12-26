@@ -1,7 +1,7 @@
 const express = require('express');
 const { PORT } = require('./config');
 const expressApp = require('./app');
-const { DBConnection } = require('./database');
+const DBConnection = require('./database/DBConnection');
 const app = express();
 const StartServer = async() => {
     const app = express();

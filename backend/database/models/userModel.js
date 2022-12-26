@@ -20,13 +20,25 @@ const userSchema = mongoose.Schema(
   },
   { timestaps: true }
 );
+userSchema.path("email").validate(async function (email) {
+  if (!this.isNew && !this.isModified("email")) return true;
 
-userSchema.methods.matchPassword = async function (enteredPassword) {
+  try {
+    const User = mongoose.model("User");
+    const count = await User.countDocuments({ email });
+    if (count > 0) return false;
+    return true;
+  } catch (error) {
+    return false;
+  }
+}, "Email already exists");
+
+userSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
 userSchema.pre("save", async function (next) {
-  if (!this.isModified('pasword')) {
+  if (!this.isModified) {
     next();
   }
 

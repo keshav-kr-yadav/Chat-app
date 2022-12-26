@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const { userApi } = require('./api');
 
 
 module.exports = async (app) => {
@@ -10,7 +11,7 @@ module.exports = async (app) => {
     app.use(express.static(__dirname + '/public'));
 
     // Api
-   
+    userApi(app);
     
 
     //Error Handling
