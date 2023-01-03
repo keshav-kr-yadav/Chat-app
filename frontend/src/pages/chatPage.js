@@ -3,7 +3,7 @@ import axios from "axios";
 function ChatPage() {
   const [chats, setChats] = useState([]);
   const fetchChats = async () => {
-    const { data } = await axios.get("http://localhost:8000/chats");
+    const { data } = await axios.get("/chats");
     setChats(data);
   };
   useEffect(() => {

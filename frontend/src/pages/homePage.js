@@ -14,7 +14,7 @@ function HomePage() {
         borderWidth="1px"
       >
         <Text textAlign={"center"} fontSize="4xl" fontFamily={"sans-serif"}>
-          Talk
+          Let's Talk
         </Text>
       </Box>
       <Box bg="white" w="100%" borderRadius="lg" borderWidth="1px" p={4}>

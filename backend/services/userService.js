@@ -31,6 +31,7 @@ module.exports = class userService {
         email,
         password
       });
+      data.password = undefined;
       return data;
     } catch (err) {
       throw err;
