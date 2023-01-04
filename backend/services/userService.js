@@ -1,4 +1,5 @@
 const { userRepository } = require("../database/repository");
+const { AppError } = require("../utils/index.js");
 
 module.exports = class userService {
   constructor() {
@@ -29,9 +30,20 @@ module.exports = class userService {
     try {
       const data = await this.userRepository.login({
         email,
-        password
+        password,
       });
       data.password = undefined;
+      return data;
+    } catch (err) {
+      throw err;
+    }
+  }
+  async getAllUsers(keyWord, userId) {
+    if (keyWord == undefined || keyWord.length == 0) {
+      throw new AppError(400, "Seach string can not be empty !");
+    }
+    try {
+      const data = await this.userRepository.getAllUsers(keyWord, userId);
       return data;
     } catch (err) {
       throw err;
