@@ -1,5 +1,4 @@
 const { AppError } = require("../../utils/index.js");
-const { generateToken } = require("../../utils/index.js");
 const { userModel } = require("../models");
 
 module.exports = class userRepository {
@@ -11,6 +10,7 @@ module.exports = class userRepository {
       throw new AppError(err.message, 401);
     }
   }
+  // Create new user
   async register(userInput) {
     try {
       const user = new userModel(userInput);
@@ -21,7 +21,6 @@ module.exports = class userRepository {
       throw new AppError(x, 400);
     }
   }
-
   async login({ email, password }) {
     try {
       const user = await userModel.findOne({ email });
@@ -32,7 +31,6 @@ module.exports = class userRepository {
           email: user.email,
           isAdmin: user.isAdmin,
           pic: user.pic,
-          token: generateToken(user._id),
         };
       } else {
         throw new AppError("Invalid email or password", 401);

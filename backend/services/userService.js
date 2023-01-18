@@ -1,5 +1,5 @@
 const { userRepository } = require("../database/repository");
-const { AppError } = require("../utils/index.js");
+const { AppError, generateToken } = require("../utils/index.js");
 
 module.exports = class userService {
   constructor() {
@@ -32,6 +32,7 @@ module.exports = class userService {
         email,
         password,
       });
+      data.token = generateToken(data._id);
       data.password = undefined;
       return data;
     } catch (err) {

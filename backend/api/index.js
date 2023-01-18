@@ -1,3 +1,4 @@
 module.exports = {
-    userApi: require('./userApi'),
-}
+  userApi: require("./userApi"),
+  chatApi: require("./chatApi"),
+};
