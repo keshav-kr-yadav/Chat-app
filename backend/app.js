@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { userApi, chatApi } = require("./api");
+const { userApi, chatApi, messageApi } = require("./api");
 
 module.exports = async (app) => {
   app.use(express.json({ limit: "1mb" }));
@@ -11,6 +11,7 @@ module.exports = async (app) => {
   // Api
   userApi(app);
   chatApi(app);
+  messageApi(app);
 
   //Error Handling
   app.use((err, req, res, next) => {
