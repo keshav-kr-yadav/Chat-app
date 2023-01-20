@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container, Box, Text ,Tabs,TabList,Tab,TabPanel,TabPanels} from "@chakra-ui/react";
-import Login from "../components/authenticatiob/login";
-import SignUp from "../components/authenticatiob/signUp";
+import Login from "../components/authentication/login";
+import SignUp from "../components/authentication/signUp";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 function HomePage() {
+  const navigate = useNavigate();
+  const { userInfo } = useSelector((state) => state.auth);
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/chats")
+    }
+  },[navigate,userInfo])
   return (
     <Container maxW="xl" centerContent>
       <Box

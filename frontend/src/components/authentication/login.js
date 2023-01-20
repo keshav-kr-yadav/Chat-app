@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   FormControl,
@@ -8,53 +7,31 @@ import {
   VStack,
   InputRightElement,
   InputGroup,
-  useToast,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { loginAction } from "../../redux/action/authAction";
+import ErrorMessage from "../errMessage";
 function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [show, setShow] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const toast = useToast();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  var { userInfo, loading, error } = useSelector((state) => state.auth);
   const handleClick = () => setShow(!show);
   const submitHandler = async (e) => {
-    setIsLoading(true);
-    if (!email || !password) {
-      toast({
-        title: "Please Fill all the Feilds",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
-      });
-      setIsLoading(false);
-      return;
-    }
-    try {
-      const { data } = await axios.post("/api/user/login", { email, password });
-      toast({
-        title: "Login Successful",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
-      localStorage.setItem("userInfo", JSON.stringify(data));
-      setIsLoading(false);
-    } catch (err) {
-      toast({
-        title: "Error Occured!",
-        description: err.response.data.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
-      setIsLoading(false);
-    }
+    e.preventDefault();
+    dispatch(loginAction(email, password));
   };
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/chats");
+    }
+  }, [userInfo, error,navigate]);
   return (
     <VStack spacing={5}>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
       <FormControl isRequired>
         <FormLabel>Email</FormLabel>
         <Input
@@ -87,7 +64,7 @@ function Login() {
         width={"100%"}
         colorScheme="green"
         onClick={submitHandler}
-        isLoading={isLoading}
+        isLoading={loading}
       >
         Login
       </Button>
