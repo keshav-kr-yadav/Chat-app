@@ -1,5 +1,14 @@
 import React, { useEffect } from "react";
-import { Container, Box, Text ,Tabs,TabList,Tab,TabPanel,TabPanels} from "@chakra-ui/react";
+import {
+  Container,
+  Box,
+  Text,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanel,
+  TabPanels,
+} from "@chakra-ui/react";
 import Login from "../components/authentication/login";
 import SignUp from "../components/authentication/signUp";
 import { useNavigate } from "react-router-dom";
@@ -27,10 +36,10 @@ function HomePage() {
         </Text>
       </Box>
       <Box bg="white" w="100%" borderRadius="lg" borderWidth="1px" p={4}>
-        <Tabs variant="soft-rounded" >
-          <TabList mb='1em'>
-            <Tab w='50%'>Login</Tab>
-            <Tab w='50%'>Sign Up</Tab>
+        <Tabs variant="soft-rounded">
+          <TabList mb="1em">
+            <Tab w="50%">Login</Tab>
+            <Tab w="50%">Sign Up</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>

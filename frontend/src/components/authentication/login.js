@@ -10,15 +10,16 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { loginAction } from "../../redux/action/authAction";
+import { loginAction } from "../../store/authSlice";
 import ErrorMessage from "../errMessage";
+import STATUS from "../../status";
 function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [show, setShow] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  var { userInfo, loading, error } = useSelector((state) => state.auth);
+  var { userInfo, status, error } = useSelector((state) => state.auth);
   const handleClick = () => setShow(!show);
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -28,7 +29,7 @@ function Login() {
     if (userInfo) {
       navigate("/chats");
     }
-  }, [userInfo, error,navigate]);
+  }, [navigate]);
   return (
     <VStack spacing={5}>
       {error && <ErrorMessage>{error}</ErrorMessage>}
@@ -64,7 +65,7 @@ function Login() {
         width={"100%"}
         colorScheme="green"
         onClick={submitHandler}
-        isLoading={loading}
+        isLoading={status===STATUS.LOADING}
       >
         Login
       </Button>

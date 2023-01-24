@@ -15,7 +15,13 @@ module.exports = class userRepository {
     try {
       const user = new userModel(userInput);
       const result = await user.save();
-      return result;
+      return {
+        _id: result._id,
+        name: result.name,
+        email: result.email,
+        isAdmin: result.isAdmin,
+        pic: result.pic,
+      };
     } catch (e) {
       const x = e.message.split(":")[2];
       throw new AppError(x, 400);

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import {
   VStack,
   FormControl,
@@ -12,7 +11,9 @@ import {
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
 import ErrorMessage from "../errMessage";
-import { registerAction } from "../../redux/action/authAction";
+import { registerAction } from "../../store/authSlice";
+import { uploadImageAPI } from "../../API/api";
+import STATUS from "../../status";
 function SignUp() {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
@@ -21,7 +22,7 @@ function SignUp() {
   const [pic, setPic] = useState();
   const [show, setShow] = useState(false);
   const [isLoading, setLoading] = useState(false);
-  const { loading, error,message } = useSelector((state) => state.auth);
+  const { status, error } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const toast = useToast();
   const handleClick = () => setShow(!show);
@@ -44,7 +45,7 @@ function SignUp() {
     formData.append("cloud_name", "dvbvv6bx6");
     setLoading(true);
     try {
-      const { data } = await axios.post(
+      const { data } = await uploadImageAPI(
         "https://api.cloudinary.com/v1_1/dvbvv6bx6/image/upload",
         formData
       );
@@ -84,13 +85,10 @@ function SignUp() {
     }
     dispatch(registerAction(name, email, password, pic));
   };
-  useEffect(() => {
-    
-  },[error,message])
   return (
     <VStack spacing={"5px"}>
       {error && <ErrorMessage>{error}</ErrorMessage>}
-      {message && <ErrorMessage>{message }</ErrorMessage> }
+      {status === STATUS.ERROR && <ErrorMessage>{error}</ErrorMessage>}
       <FormControl isRequired>
         <FormLabel>Name</FormLabel>
         <Input type="text" onChange={(e) => setName(e.target.value)} />
@@ -135,7 +133,7 @@ function SignUp() {
         width={"100%"}
         colorScheme="green"
         onClick={submitHandler}
-        isLoading={isLoading || loading}
+        isLoading={isLoading || status === STATUS.LOADING}
       >
         SignUp
       </Button>

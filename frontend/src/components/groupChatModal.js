@@ -14,9 +14,10 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { findUserChats } from "../redux/action/chatAction";
+import { createGroupChatAPI } from "../API/api";
+import { fetchChatAction } from "../store/chatSlice";
 import url from "../url";
 import UserBadgeItem from "./userBadgeItem";
 import UserListItem from "./userListItem";
@@ -61,7 +62,6 @@ const GroupChatModal = ({ children }) => {
         `${url}/api/user?search=${query}`,
         config
       );
-      console.log(data);
       setLoading(false);
       setSearchResult(data);
     } catch (err) {
@@ -75,7 +75,7 @@ const GroupChatModal = ({ children }) => {
       });
     }
   };
-  const handleSubmit = async() => {
+  const handleSubmit = async () => {
     if (!groupChatName || !selectedUsers) {
       toast({
         title: "Please fill all the feilds",
@@ -92,15 +92,12 @@ const GroupChatModal = ({ children }) => {
           Authorization: `Bearer ${token}`,
         },
       };
-      const { data } = await axios.post(
-        `${url}/group`,
-        {
-          chatName: groupChatName,
-          users: selectedUsers
-        },
+     await createGroupChatAPI(
+        groupChatName,
+        selectedUsers,
         config
       );
-      dispatch(findUserChats());
+      dispatch(fetchChatAction());
       onClose();
       toast({
         title: "New Group Chat Created!",
@@ -120,7 +117,7 @@ const GroupChatModal = ({ children }) => {
       });
     }
   };
-  useEffect(() => {setSelectedUsers([])}, []);
+
   return (
     <>
       <span onClick={onOpen}>{children}</span>

@@ -16,22 +16,21 @@ import SideDrawer from "./sideDrawer";
 import ProfileModal from "./profileModal";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutAction } from "../redux/action/authAction";
+import { logout } from "../store/authSlice";
 
 const Header = () => {
   const [notification, setNotification] = useState([]);
-  // const [selectedChat, setSelectedChat] = useState();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.userInfo);
   const logoutHandler = () => {
-    dispatch(logoutAction());
+    dispatch(logout());
     navigate("/");
   };
   return (
     <>
       <Box
-        display='flex'
+        display="flex"
         justifyContent="space-between"
         alignItems="center"
         bg="white"
@@ -63,7 +62,6 @@ const Header = () => {
                 <MenuItem
                   key={notif._id}
                   onClick={() => {
-                    // setSelectedChat(notif.chat);
                     setNotification(notification.filter((n) => n !== notif));
                   }}
                 ></MenuItem>

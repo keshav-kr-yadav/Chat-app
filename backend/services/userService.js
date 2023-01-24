@@ -17,6 +17,7 @@ module.exports = class userService {
         password,
         pic,
       });
+      data.token = generateToken(data._id);
       return data;
     } catch (err) {
       throw err;

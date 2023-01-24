@@ -1,20 +1,24 @@
-import React, { useState,useEffect } from 'react'
+import React, { useEffect } from "react";
 import { AddIcon } from "@chakra-ui/icons";
 
-import ChatLoading from './chatLoading';
+import ChatLoading from "./chatLoading";
 import { Box, Stack, Text, Button } from "@chakra-ui/react";
-import { getSender } from '../config.js/chatLogic';
-import GroupChatModal from './groupChatModal';
-import { useDispatch, useSelector } from 'react-redux';
-import { findUserChats } from '../redux/action/chatAction';
+import { getSender } from "../config.js/chatLogic";
+import GroupChatModal from "./groupChatModal";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchChatAction, setSelectedChat } from "../store/chatSlice";
+import { fetchMessageAction } from "../store/messageSlice";
 const MyChats = () => {
-  const [selectedChat, setSelectedChat] = useState(true);
-  const loggedUser = useSelector(state => state.auth.userInfo);
-  const { chats, loading, error } = useSelector((state) => state.userChats);
+  const { userInfo } = useSelector((state) => state.auth);
+  const { selectedChat, userChats } = useSelector((state) => state.chat);
   const dispatch = useDispatch();
+  const clickHandler = (chat) => {
+    dispatch(setSelectedChat(chat));
+    dispatch(fetchMessageAction());
+  };
   useEffect(() => {
-    dispatch(findUserChats());
-  }, []) 
+    dispatch(fetchChatAction());
+  }, []);
   return (
     <Box
       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
@@ -22,7 +26,7 @@ const MyChats = () => {
       alignItems="center"
       p={3}
       bg="white"
-      w={{ base: "100%", md: "31%" }}
+      width={{ base: "100%", md: "31%" }}
       borderRadius="lg"
       borderWidth="1px"
     >
@@ -57,14 +61,22 @@ const MyChats = () => {
         borderRadius="lg"
         overflowY="scroll"
       >
-        {chats ? (
+        {userChats ? (
           <Stack overflowY="scroll">
-            {chats.map((chat) => (
+            {userChats.map((chat) => (
               <Box
-                onClick={() => setSelectedChat(chat)}
+                onClick={() => clickHandler(chat)}
                 cursor="pointer"
-                bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
-                color={selectedChat === chat ? "white" : "black"}
+                bg={
+                  selectedChat && selectedChat._id === chat._id
+                    ? "#38B2AC"
+                    : "#E8E8E8"
+                }
+                color={
+                  selectedChat && selectedChat._id === chat._id
+                    ? "white"
+                    : "black"
+                }
                 px={3}
                 py={2}
                 borderRadius="lg"
@@ -72,7 +84,7 @@ const MyChats = () => {
               >
                 <Text>
                   {!chat.isGroupChat
-                    ? getSender(loggedUser, chat.users)
+                    ? getSender(userInfo, chat.users)
                     : chat.chatName}
                 </Text>
                 {chat.latestMessage && (
@@ -92,6 +104,6 @@ const MyChats = () => {
       </Box>
     </Box>
   );
-}
+};
 
 export default MyChats;
