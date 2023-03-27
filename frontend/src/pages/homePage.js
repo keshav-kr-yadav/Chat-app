@@ -18,9 +18,9 @@ function HomePage() {
   const { userInfo } = useSelector((state) => state.auth);
   useEffect(() => {
     if (userInfo) {
-      navigate("/chats")
+      navigate("/chats");
     }
-  },[navigate,userInfo])
+  }, [navigate, userInfo]);
   return (
     <Container maxW="xl" centerContent>
       <Box

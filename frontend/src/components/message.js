@@ -1,19 +1,25 @@
-import React from "react";
-import { Avatar, Box, Tooltip } from "@chakra-ui/react";
+import React, { useEffect } from "react";
+import { Avatar, Box, Spinner, Tooltip } from "@chakra-ui/react";
 import {
   isLastMessage,
   isSameSender,
   isSameSenderMargin,
   isSameUser,
 } from "../config.js/chatLogic";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import STATUS from "../status";
+import { fetchMessageAction } from "../store/messageSlice";
 const Message = () => {
   const { userInfo: user } = useSelector((state) => state.auth);
-  const { messages } = useSelector((state) => state.message);
-  console.log(messages);
+  const { messages, status } = useSelector((state) => state.message);
+  const { selectedChat } = useSelector((state) => state.chat);
+  const dispatch = useDispatch();
   return (
     <>
-      {messages &&
+      {status === STATUS.LOADING ? (
+        <Spinner></Spinner>
+      ) : (
+        messages &&
         messages.map((m, i) => (
           <Box style={{ display: "flex" }} key={m._id}>
             {(isSameSender(messages, m, i, user._id) ||
@@ -44,7 +50,8 @@ const Message = () => {
               {m.content}
             </span>
           </Box>
-        ))}
+        ))
+      )}
     </>
   );
 };

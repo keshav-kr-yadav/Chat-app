@@ -17,11 +17,11 @@ const chatSlice = createSlice({
       state.selectedChat = newChat;
     },
     setUserChats(state, action) {
-      const arr = [...state.userChats, action.payload];
-      const newArray = arr.sort((a, b) => {
-        return b.updatedAt.localeCompare(a.updatedAt);
-      });
-      state.userChats = newArray;
+      const arr = state.userChats.filter(
+        (chat) => chat._id != action.payload._id
+      );
+      arr.unshift(action.payload);
+      state.userChats = arr;
     },
     fetUserChats(state, action) {
       state.userChats = action.payload;

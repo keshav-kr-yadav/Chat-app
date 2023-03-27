@@ -1,23 +1,31 @@
-import React, { useState } from "react";
-import { Box, FormControl, IconButton, Input } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { Box, FormControl, IconButton, Input, Text } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import UpdateGroupChatModal from "./updateGroupChatModal";
 import { getSender, getSenderFull } from "../config.js/chatLogic";
 import { useSelector, useDispatch } from "react-redux";
 import ProfileModal from "./profileModal";
 import Message from "./message";
-import { sendMessageAction } from "../store/messageSlice";
+import { sendMessage, sendMessageAction } from "../store/messageSlice";
 import { setSelectedChat } from "../store/chatSlice";
-
+import { io } from "socket.io-client";
+import { setNotification } from "../store/notification";
+var socket, selectedChatCompare;
+const ENDPOINT = "http://localhost:4000";
 const SingleChat = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const { selectedChat } = useSelector((state) => state.chat);
+  const notifications = useSelector((state) => state.notifications);
   const [newMessage, setNewMessage] = useState();
+  const [typing, setTyping] = useState(false);
+  const [istyping, setIsTyping] = useState(false);
+  const [socketConnected, setsocketConnected] = useState(false);
   const dispatch = useDispatch();
   const sendMessageHandler = (event) => {
     if (event.key === "Enter" && newMessage) {
       setNewMessage("");
-      dispatch(sendMessageAction(newMessage));
+      socket.emit("stop typing", selectedChat._id);
+      dispatch(sendMessageAction(newMessage, socket));
     }
   };
   const backHadler = () => {
@@ -25,7 +33,51 @@ const SingleChat = () => {
   };
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
+    if (!socketConnected) return;
+    if (!typing) {
+      setTyping(true);
+      socket.emit("typing", selectedChat._id);
+    }
+    let lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
+    setTimeout(() => {
+      var timeNow = new Date().getTime();
+      var timeDiff = timeNow - lastTypingTime;
+      if (timeDiff >= timerLength && typing) {
+        socket.emit("stop typing", selectedChat._id);
+        setTyping(false);
+      }
+    }, timerLength);
   };
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup", userInfo);
+    socket.on("connected", () => {
+      setsocketConnected(true);
+    });
+    socket.on("typing", () => {
+      setIsTyping(true);
+    });
+    socket.on("stop typing", () => {
+      setIsTyping(false);
+    });
+    socket.on("message recieved", (newMessage) => {
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessage.chat._id
+      ) {
+        if (!notifications.includes(newMessage)) {
+          dispatch(setNotification(newMessage));
+        }
+      } else {
+        dispatch(sendMessage(newMessage));
+      }
+    });
+  }, []);
+  useEffect(() => {
+    socket.emit("join chat", selectedChat._id);
+    selectedChatCompare = selectedChat;
+  }, [selectedChat]);
   return (
     <>
       <Box
@@ -74,6 +126,7 @@ const SingleChat = () => {
         isRequired
         mt={3}
       >
+        {istyping && <Text>typing...</Text>}
         <Input
           variant="filled"
           bg="#E0E0E0"

@@ -17,9 +17,13 @@ import ProfileModal from "./profileModal";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/authSlice";
+import { getSender } from "../config.js/chatLogic";
+import { removeNotification } from "../store/notification";
+import { setSelectedChat } from "../store/chatSlice";
+import { fetchMessageAction } from "../store/messageSlice";
 
 const Header = () => {
-  const [notification, setNotification] = useState([]);
+  const notification = useSelector((state) => state.notifications);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.userInfo);
@@ -62,9 +66,15 @@ const Header = () => {
                 <MenuItem
                   key={notif._id}
                   onClick={() => {
-                    setNotification(notification.filter((n) => n !== notif));
+                    dispatch(setSelectedChat(notif.chat));
+                    dispatch(removeNotification(notif));
+                    dispatch(fetchMessageAction());
                   }}
-                ></MenuItem>
+                >
+                  {notif.chat.isGroupChat
+                    ? `New Message in ${notif.chat.chatName}`
+                    : `New Message from ${getSender(user, notif.chat.users)}`}
+                </MenuItem>
               ))}
             </MenuList>
           </Menu>
