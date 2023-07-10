@@ -11,7 +11,6 @@ import { setSelectedChat } from "../store/chatSlice";
 import { io } from "socket.io-client";
 import { setNotification } from "../store/notification";
 var socket, selectedChatCompare;
-const ENDPOINT = "https://hellochat-keshav019.vercel.app/";
 const SingleChat = () => {
   const { userInfo } = useSelector((state) => state.auth);
   const { selectedChat } = useSelector((state) => state.chat);
@@ -50,7 +49,7 @@ const SingleChat = () => {
     }, timerLength);
   };
   useEffect(() => {
-    socket = io(ENDPOINT);
+    socket = io();
     socket.emit("setup", userInfo);
     socket.on("connected", () => {
       setsocketConnected(true);

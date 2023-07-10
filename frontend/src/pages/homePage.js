@@ -18,6 +18,7 @@ function HomePage() {
   const { userInfo } = useSelector((state) => state.auth);
   useEffect(() => {
     if (userInfo) {
+      
       navigate("/chats");
     }
   }, [navigate, userInfo]);
