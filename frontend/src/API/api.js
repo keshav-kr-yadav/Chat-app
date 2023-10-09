@@ -1,5 +1,5 @@
 import axios from "axios";
-const url = "http://localhost:4000";
+const url = "";
 
 // User API
 export const registerAPI = (name, email, password, pic) =>
