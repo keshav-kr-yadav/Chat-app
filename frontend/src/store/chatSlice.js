@@ -18,7 +18,7 @@ const chatSlice = createSlice({
     },
     setUserChats(state, action) {
       const arr = state.userChats.filter(
-        (chat) => chat._id != action.payload._id
+        (chat) => chat._id !== action.payload._id
       );
       arr.unshift(action.payload);
       state.userChats = arr;
